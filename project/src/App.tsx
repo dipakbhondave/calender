@@ -1,5 +1,6 @@
 import React from 'react';
 import Calendar from './components/Calendar';
+import  images from './assets/navami.jpg';
 
 
 function App() {
