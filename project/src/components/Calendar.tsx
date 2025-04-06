@@ -4,7 +4,9 @@ import { importantDates } from '../data/important-dates';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentImportantDate, setCurrentImportantDate] = useState<typeof importantDates[0] | null>(null);
+  const [currentImportantDate, setCurrentImportantDate] =
+    useState<typeof importantDates[0] | null>(null);
+
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
@@ -16,7 +18,7 @@ const Calendar = () => {
 
   const getImportantDate = (date: Date) => {
     const dateString = formatDateString(date);
-    return importantDates.find(d => d.date === dateString);
+    return importantDates.find((d) => d.date === dateString);
   };
 
   const changeDate = (days: number) => {
@@ -41,11 +43,7 @@ const Calendar = () => {
       const threshold = 50;
 
       if (Math.abs(diff) > threshold) {
-        if (diff > 0) {
-          changeDate(1);
-        } else {
-          changeDate(-1);
-        }
+        changeDate(diff > 0 ? 1 : -1);
       }
     }
     touchStartX.current = null;
@@ -79,117 +77,97 @@ const Calendar = () => {
       calendar: 'indian',
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     };
     return date.toLocaleDateString('en-IN', options);
   };
 
   const NavigationButtons = () => (
-    <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex justify-between px-4 pointer-events-none">
+    <div className="fixed bottom-4 left-0 right-0 flex justify-between px-6 sm:px-12 pointer-events-none z-10">
       <button
         onClick={() => changeDate(-1)}
-        className="bg-white/20 hover:bg-white/30 active:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 transition-all pointer-events-auto"
+        className="bg-white/20 hover:bg-white/30 active:bg-white/40 backdrop-blur-sm text-white rounded-full p-3 transition-all pointer-events-auto"
       >
-        <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+        <ChevronLeft size={24} />
       </button>
       <button
         onClick={() => changeDate(1)}
-        className="bg-white/20 hover:bg-white/30 active:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 transition-all pointer-events-auto"
+        className="bg-white/20 hover:bg-white/30 active:bg-white/40 backdrop-blur-sm text-white rounded-full p-3 transition-all pointer-events-auto"
       >
-        <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+        <ChevronRight size={24} />
       </button>
     </div>
   );
 
   if (!currentImportantDate) {
     return (
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6"
-           onTouchStart={handleTouchStart}
-           onTouchMove={handleTouchMove}
-           onTouchEnd={handleTouchEnd}>
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="p-4 sm:p-8 text-center relative min-h-[200px] flex items-center justify-center">
-            <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex justify-between px-2 sm:px-4">
-              <button
-                onClick={() => changeDate(-1)}
-                className="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 rounded-full p-2 transition-all"
-              >
-                <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
-              </button>
-              <button
-                onClick={() => changeDate(1)}
-                className="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 rounded-full p-2 transition-all"
-              >
-                <ChevronRight size={20} className="sm:w-6 sm:h-6" />
-              </button>
-            </div>
-            <div>
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <CalendarIcon className="w-6 h-6 text-gray-600" />
-                <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
-                  {currentDate.toLocaleDateString('en-US', { 
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </h2>
-              </div>
-              <p className="text-lg text-gray-600 mb-2">{getIndianDate(currentDate)}</p>
-              <p className="mt-4 text-base sm:text-xl text-gray-600">No special occasions today</p>
-            </div>
+      <div
+        className="w-full min-h-screen px-4 flex items-center justify-center"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <CalendarIcon className="w-6 h-6 text-gray-600" />
+            <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
+              {currentDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </h2>
           </div>
+          <p className="text-lg text-gray-600 mb-2">{getIndianDate(currentDate)}</p>
+          <p className="mt-4 text-base sm:text-xl text-gray-600">No special occasions today</p>
+          <NavigationButtons />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6"
-         onTouchStart={handleTouchStart}
-         onTouchMove={handleTouchMove}
-         onTouchEnd={handleTouchEnd}>
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="relative h-[300px] sm:h-96">
-          <img
-            src={currentImportantDate.image}
-            alt={currentImportantDate.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-            <div className="p-4 sm:p-8 text-white w-full">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
-                  {currentImportantDate.type}
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl font-bold mb-2">{currentImportantDate.name}</h2>
-              <p className="text-base sm:text-lg opacity-90 mb-2">
-                {currentImportantDate.description}
-              </p>
-              <div className="flex items-center gap-2 mt-4">
-                <CalendarIcon className="w-5 h-5" />
-                <p className="text-sm sm:text-base opacity-90">
-                  {getIndianDate(currentDate)}
-                </p>
-              </div>
-            </div>
-          </div>
-          <NavigationButtons />
+    <div
+      className="w-full min-h-screen px-0 sm:px-6 flex flex-col"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="w-full">
+        <img
+          src={currentImportantDate.image}
+          alt={currentImportantDate.name}
+          className="w-full h-[250px] sm:h-[400px] object-cover"
+        />
+      </div>
+
+      <div className="bg-white p-4 sm:p-8 text-gray-900 flex-1">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">
+            {currentImportantDate.type}
+          </span>
         </div>
-        <div className="p-4 sm:p-6 bg-gray-50">
-          <div className="text-center">
-            <p className="text-lg sm:text-2xl font-semibold text-gray-900">
-              {currentDate.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
-          </div>
+        <h2 className="text-2xl sm:text-4xl font-bold mb-2">{currentImportantDate.name}</h2>
+        <p className="text-base sm:text-lg mb-2">{currentImportantDate.description}</p>
+        <div className="flex items-center gap-2 mt-4 text-gray-600">
+          <CalendarIcon className="w-5 h-5" />
+          <p className="text-sm sm:text-base">{getIndianDate(currentDate)}</p>
         </div>
       </div>
+
+      <div className="bg-gray-50 p-4 text-center">
+        <p className="text-lg sm:text-2xl font-semibold text-gray-900">
+          {currentDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </p>
+      </div>
+
+      <NavigationButtons />
     </div>
   );
 };
