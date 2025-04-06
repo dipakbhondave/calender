@@ -1,6 +1,7 @@
 import React from 'react';
 import Calendar from './components/Calendar';
 
+
 function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-rose-50 py-4 sm:py-8">
